@@ -2,7 +2,7 @@ package com.application.views;
 
 import com.application.data.entity.User;
 import com.application.security.Authentication;
-import com.application.views.Home.HomeView;
+import com.application.views.home.HomeView;
 import com.application.views.favouriteplace.FavouritePlaceView;
 import com.application.views.helloworld.HelloWorldView;
 import com.application.views.masterdetail.MasterDetailView;
@@ -14,12 +14,10 @@ import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility.*;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
-import java.io.ByteArrayInputStream;
 import java.util.Optional;
 
 /**
@@ -69,10 +67,11 @@ public class MainLayout extends AppLayout {
             div.getElement().getStyle().set("display", "flex");
             div.getElement().getStyle().set("align-items", "center");
             div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
+            userName.addClassName("button-pointer");
             userName.add(div);
-            userName.getSubMenu().addItem("Sign out", e -> {
-                authentication.logout();
-            });
+            Label labelSignOut= new Label("Sign out");
+            labelSignOut.addClassName("button-pointer");
+            userName.getSubMenu().addItem(labelSignOut, e -> authentication.logout());
 
             layout.add(userMenu);
         } else {

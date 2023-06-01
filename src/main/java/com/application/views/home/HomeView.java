@@ -1,19 +1,15 @@
-package com.application.views.Home;
+package com.application.views.home;
 
 import com.application.data.dto.CityGeoCodingDTO;
 import com.application.data.service.LocationService;
 import com.application.data.service.UserFavouritePlaceService;
 import com.application.security.Authentication;
 import com.application.views.MainLayout;
-import com.application.views.weatherdetail.WeatherDetail;
+import com.application.views.common.WeatherCard;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -24,7 +20,6 @@ import jakarta.annotation.security.PermitAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,8 +35,8 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
 
     /* html elements */
 
-    private final TextField textFieldCityName = new TextField("City Name", "Find by City Name");
-    private final Button buttonSearch = new Button("Search");
+    private final TextField textFieldCityName = new TextField("City Name", "Find City Name");
+    private final Button buttonSearch = new Button("Find");
 
     private final Div divCityList = new Div();
     private final Div divPagination = new Div();
@@ -65,6 +60,7 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
             }
         });
         buttonSearch.addClickShortcut(Key.ENTER);
+        buttonSearch.addClassName("button-pointer");
 
         setMargin(true);
         HorizontalLayout firstLayout = new HorizontalLayout(textFieldCityName, buttonSearch);
@@ -73,8 +69,11 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
         add(firstLayout);
 
         addClassName("card-list-view");
-        divCityList.getElement().setAttribute("style", "min-height: 8rem; overflow-y:scroll");
+        divCityList.getElement().setAttribute("style", "min-height: 8rem;");
         add(divCityList);
+
+        buttonPrevious.addClassName("button-pointer");
+        buttonNext.addClassName("button-pointer");
 
         HorizontalLayout thirdLayout = new HorizontalLayout(buttonPrevious, selectPage, buttonNext);
         thirdLayout.setAlignItems(Alignment.END);
@@ -85,7 +84,7 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
 
     private void getCityList() {
         String searchCity = this.textFieldCityName.getValue().trim();
-        this.locationService.getLocationData(searchCity);
+        locationService.getLocationData(searchCity);
 
         if (this.locationService.getTotal() > 0) {
             add(divPagination);
@@ -98,8 +97,9 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
 
     private void addCitListDiv(List<CityGeoCodingDTO> cityGeoCodingDTOList) {
         divCityList.removeAll();
+        WeatherCard weatherCard = new WeatherCard(authentication, userFavouritePlaceService);
         for (CityGeoCodingDTO cityGeoCoding : cityGeoCodingDTOList) {
-            divCityList.add(createCard(cityGeoCoding));
+            divCityList.add(weatherCard.createCardCityDetails(cityGeoCoding));
         }
     }
 
@@ -108,71 +108,11 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
         int totalPage = (int) Math.ceil(((double) total / perPage));
         this.listPerPage = IntStream.range(1, totalPage + 1).boxed().collect(Collectors.toList());
 
-        selectPage.setLabel("Pages");
+        selectPage.setLabel("Page");
         selectPage.setItems(this.listPerPage);
         selectPage.setValue(this.currentPage);
     }
 
-    private HorizontalLayout createCard(CityGeoCodingDTO cityGeoCodingDTO) {
-        HorizontalLayout card = new HorizontalLayout();
-        card.addClassName("card");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
-
-        VerticalLayout description = new VerticalLayout();
-        description.addClassName("location-item");
-        description.setPadding(false);
-
-        HorizontalLayout header = new HorizontalLayout();
-        header.addClassName("header");
-        header.addClassName("headerPointer");
-        header.setSpacing(false);
-        header.getThemeList().add("spacing-s");
-
-        Span name = new Span(cityGeoCodingDTO.getName());
-        name.addClassName("name");
-        Span spanCountry = new Span(cityGeoCodingDTO.getCountry());
-        spanCountry.addClassName("date");
-        header.add(name, spanCountry);
-
-        HorizontalLayout actions = new HorizontalLayout();
-        actions.addClassName("actions");
-        actions.setSpacing(false);
-        actions.getThemeList().add("spacing-s");
-
-        Icon likeIcon = VaadinIcon.HEART.create();
-        likeIcon.addClassName("icon");
-        likeIcon.addClassName("icon-red");
-
-        likeIcon.addClickListener(iconClickEvent -> {
-            if (this.authentication.isLoggedIn()) {
-                String msg = this.userFavouritePlaceService.makePlaceFavourite(cityGeoCodingDTO);
-                Notification.show(msg, 5000, Notification.Position.TOP_CENTER);
-            } else {
-                likeIcon.getUI().ifPresent(ui -> {
-                    ui.navigate("login");
-                });
-            }
-        });
-
-        header.addClickListener(event -> {
-            header.getUI().ifPresent(ui -> {
-                QueryParameters params = QueryParameters.simple(Map.of(
-                        "city", cityGeoCodingDTO.getName(),
-                        "lon", String.valueOf(cityGeoCodingDTO.getLongitude()),
-                        "lat", String.valueOf(cityGeoCodingDTO.getLatitude()),
-                        "tz", String.valueOf(cityGeoCodingDTO.getTimezone())
-                ));
-                ui.navigate(WeatherDetail.class, params);
-            });
-        });
-
-        actions.add(likeIcon);
-
-        description.add(header, actions);
-        card.add(description);
-        return card;
-    }
 
     private void addPaginationSelectListener() {
         this.selectPage.addValueChangeListener(e -> {

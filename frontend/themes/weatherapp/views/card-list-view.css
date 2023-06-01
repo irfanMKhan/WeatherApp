@@ -1,99 +1,110 @@
 .card-list-view {
-  display: block;
-  height: 100%;
+    display: block;
+    height: 100%;
 }
 
 .card-list-view vaadin-grid {
-  height: 100%;
-  line-height: var(--lumo-line-height-m);
+    height: 100%;
+    line-height: var(--lumo-line-height-m);
 }
 
 .card-list-view vaadin-grid,
 .card-list-view vaadin-grid-cell-content {
-  background-color: var(--lumo-contrast-10pct);
+    background-color: var(--lumo-contrast-10pct);
 }
 
 .card-list-view .card {
-  background-color: var(--lumo-base-color);
-  border-radius: var(--lumo-border-radius);
-  box-shadow: var(--lumo-box-shadow-xs);
-  padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
-  margin-bottom: 10px;
+    background-color: var(--lumo-base-color);
+    border-radius: var(--lumo-border-radius);
+    box-shadow: var(--lumo-box-shadow-xs);
+    padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
+    margin-bottom: 0.5rem;
 }
 
 .card-list-view img {
-  border-radius: 50%;
-  flex-shrink: 0;
-  height: var(--lumo-size-m);
-  margin-right: calc(var(--lumo-space-s) * 1.5);
-  width: var(--lumo-size-m);
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: var(--lumo-size-m);
+    margin-right: calc(var(--lumo-space-s) * 1.5);
+    width: var(--lumo-size-m);
 }
 
 .card-list-view .header {
-  align-items: baseline;
+    align-items: baseline;
+}
+
+.button-pointer {
+    cursor: pointer;
+}
+
+.text-tertiary {
+    font-size: var(--lumo-font-size-xs);
+    color: var(--lumo-tertiary-text-color);
 }
 
 .card-list-view .headerPointer {
-  width: 100%;
-  cursor: pointer;
+    width: 100%;
+    cursor: pointer;
 }
 
 .card-list-view .name {
-  font-size: var(--lumo-font-size-s);
-  font-weight: bold;
-  margin-right: var(--lumo-space-s);
+    font-weight: bold;
+    margin-right: var(--lumo-space-s);
+    font-size: var(--lumo-font-size-s);
 }
 
 .card-list-view .date {
-  color: var(--lumo-tertiary-text-color);
-  font-size: var(--lumo-font-size-xs);
+    margin-right: var(--lumo-space-s);
+    font-size: var(--lumo-font-size-xs);
+    color: var(--lumo-tertiary-text-color);
 }
 
-.card-list-view .current-temperature{
-  color: var(--lumo-tertiary-text-color);
-  font-size: var(--lumo-font-size-xs);
+.card-list-view .current-temperature {
+    color: var(--lumo-tertiary-text-color);
+    font-size: var(--lumo-font-size-xs);
 }
 
 .card-list-view .post {
-  color: var(--lumo-secondary-text-color);
-  font-size: var(--lumo-font-size-s);
-  margin-bottom: var(--lumo-space-s);
-  white-space: normal;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    margin-bottom: var(--lumo-space-s);
+    white-space: normal;
 }
 
 .card-list-view .actions {
-  align-items: center;
+    align-items: center;
 }
 
 .card-list-view .icon {
-  color: var(--lumo-tertiary-text-color);
-  height: calc(var(--lumo-icon-size-s) * 0.8);
-  margin-right: var(--lumo-space-s);
-  width: calc(var(--lumo-icon-size-s) * 0.8);
+    color: var(--lumo-tertiary-text-color);
+    height: calc(var(--lumo-icon-size-s) * 0.8);
+    margin-right: var(--lumo-space-s);
+    width: calc(var(--lumo-icon-size-s) * 0.8);
 }
 
 .card-list-view .likes,
 .card-list-view .comments,
 .card-list-view .shares {
-  color: var(--lumo-tertiary-text-color);
-  font-size: var(--lumo-font-size-xs);
-  margin-right: var(--lumo-space-l);
+    color: var(--lumo-tertiary-text-color);
+    font-size: var(--lumo-font-size-xs);
+    margin-right: var(--lumo-space-l);
 }
+
 .location-item .header {
-  padding: 15px 0;
+    padding: 1rem 0;
 }
 
 .location-item .header .name:hover {
-  color: #155e845e;;
-  cursor: pointer;
+    color: #155e845e;;
+    cursor: pointer;
 }
 
 .location-item .header .date:hover {
-  color: #155e845e;;
-  cursor: pointer;
+    color: #155e845e;;
+    cursor: pointer;
 }
 
 .daily-forcast-item:hover {
-  background: #155e845e;
-  cursor: pointer;
+    background: #155e845e;
+    cursor: pointer;
 }
