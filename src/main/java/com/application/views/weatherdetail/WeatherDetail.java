@@ -27,11 +27,11 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
     private final H2 mainTitle = new H2();
 
     /* html elements */
+
     private final H3 hourlyForecastTitle = new H3("Hourly Forecasts");
-    private final HorizontalLayout horizontalLayoutForecast = new HorizontalLayout();
+    private final Div divCurrentWeather = new Div();
     private final Div divDailyForecast = new Div();
     private final Div divHourlyForecast = new Div();
-    private final Div divCurrentWeather = new Div();
     private WeatherForecastResponse weatherForecastResponse;
 
     WeatherDetail(WeatherForecastService weatherForecastService) {
@@ -42,34 +42,39 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         setSizeFull();
         setMargin(true);
 
+        H3 currentWeatherTitle = new H3("Today's Weather Forecast for: ");
+        add(currentWeatherTitle);
+
         add(divCurrentWeather);
 
-        HorizontalLayout horizontalLayoutDaily = new HorizontalLayout();
-        horizontalLayoutDaily.setSpacing(true);
-        horizontalLayoutDaily.setPadding(true);
-        horizontalLayoutDaily.getThemeList().add("spacing");
+        VerticalLayout verticalLayoutDaily = new VerticalLayout();
+        verticalLayoutDaily.setSpacing(true);
+        verticalLayoutDaily.setPadding(true);
+        verticalLayoutDaily.getThemeList().add("spacing");
 
-        horizontalLayoutDaily.add(new H3("7 Days Forecast"));
+        verticalLayoutDaily.add(new H3("7 Days Forecast"));
         divDailyForecast.getElement().setAttribute("style", "width: 100%");
 
-        horizontalLayoutDaily.add(divDailyForecast);
+        verticalLayoutDaily.add(divDailyForecast);
 
-        Div divTitleDailyForecast = new Div(horizontalLayoutDaily);
+
+        VerticalLayout verticalLayoutHourly = new VerticalLayout();
+        verticalLayoutHourly.setSpacing(false);
+        verticalLayoutHourly.setPadding(false);
+        verticalLayoutHourly.getThemeList().add("spacing-s");
+        verticalLayoutHourly.add(hourlyForecastTitle);
+
+        divHourlyForecast.getElement().setAttribute("style", "width: 100%");
+        verticalLayoutHourly.add(divHourlyForecast);
+
+        Div hourlyForecastContainer = new Div(verticalLayoutHourly);
+        hourlyForecastContainer.getElement().setAttribute("style", "flex: 1");
+
+        Div divTitleDailyForecast = new Div(verticalLayoutDaily);
         divTitleDailyForecast.getElement().setAttribute("style", "flex: 1");
 
+        VerticalLayout horizontalLayoutForecast = new VerticalLayout();
         horizontalLayoutForecast.add(divTitleDailyForecast);
-
-        VerticalLayout hourlyForecastLayout = new VerticalLayout();
-        hourlyForecastLayout.setSpacing(false);
-        hourlyForecastLayout.setPadding(false);
-        hourlyForecastLayout.getThemeList().add("spacing-s");
-
-        hourlyForecastLayout.add(hourlyForecastTitle);
-        divHourlyForecast.getElement().setAttribute("style", "width: 100%");
-        hourlyForecastLayout.add(divHourlyForecast);
-
-        Div hourlyForecastContainer = new Div(hourlyForecastLayout);
-        hourlyForecastContainer.getElement().setAttribute("style", "flex: 1");
 
         horizontalLayoutForecast.add(hourlyForecastContainer);
 
@@ -129,7 +134,7 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         if (latitude != null && longitude != null && tz != null) {
             this.weatherForecastResponse = this.weatherForecastService.getWeatherForecastForLocation(latitude, longitude, tz);
             if (this.weatherForecastResponse != null) {
-                divCurrentWeather.add(this.createCard(weatherForecastResponse));
+                divCurrentWeather.add(this.horizontalLayoutCurrentWeather(weatherForecastResponse));
                 addDailyForecasts();
             }
         }
@@ -139,6 +144,8 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         List<DailyForecastDTO> dailyForecastDTOList = this.weatherForecastService.getDailyForeCast(this.weatherForecastResponse);
 
         divDailyForecast.removeAll();
+        divDailyForecast.addClassName("flex");
+
         for (DailyForecastDTO dailyForecastDTO : dailyForecastDTOList) {
             divDailyForecast.add(dailyForecastsCard(
                             dailyForecastDTO.getDate(),
@@ -151,68 +158,78 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         }
     }
 
-    private HorizontalLayout dailyForecastsCard(String date, Double tempMin, Double tempMax, Double rain, Double windSpeed) {
-        HorizontalLayout card = new HorizontalLayout();
-        card.addClassNames("card", "daily-forcast-item");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
-
-        VerticalLayout description = new VerticalLayout();
-        description.addClassName("description");
-        description.setSpacing(false);
-        description.setPadding(false);
+    private VerticalLayout dailyForecastsCard(String date, Double tempMin, Double tempMax, Double rain, Double windSpeed) {
 
         //date
         HorizontalLayout dateLayout = new HorizontalLayout();
         dateLayout.setSpacing(false);
         dateLayout.getThemeList().add("spacing-s");
-
-        dateLayout.add(new Span("Date"), new Span(date));
+        dateLayout.add(new Span("Date: "), new Span(date));
+        dateLayout.addClassName("flex");
+        dateLayout.addClassName("text-inline");
 
         //min temp
         HorizontalLayout minTempLayout = new HorizontalLayout();
         minTempLayout.setSpacing(false);
         minTempLayout.getThemeList().add("spacing-s");
-
-        minTempLayout.add(new Span("Minimum Temperature"), new Span(tempMin + "°C"));
+        minTempLayout.add(new Span("Min Temp: "), new Span(tempMin + "°C"));
+        minTempLayout.addClassName("flex");
+        minTempLayout.addClassName("text-inline");
 
         //max temp
         HorizontalLayout maxTempLayout = new HorizontalLayout();
         maxTempLayout.setSpacing(false);
         maxTempLayout.getThemeList().add("spacing-s");
-
-        maxTempLayout.add(new Span("Maximum Temperature"), new Span(tempMax + "°C"));
+        maxTempLayout.add(new Span("Max Temp: "), new Span(tempMax + "°C"));
+        maxTempLayout.addClassName("flex");
+        maxTempLayout.addClassName("text-inline");
 
         //rain
         HorizontalLayout rainLayout = new HorizontalLayout();
         rainLayout.setSpacing(false);
         rainLayout.getThemeList().add("spacing-s");
-
-        rainLayout.add(new Span("Rain Sum"), new Span(rain + "mm"));
+        rainLayout.add(new Span("Rain Sum: "), new Span(rain + "mm"));
+        rainLayout.addClassName("flex");
+        rainLayout.addClassName("text-inline");
 
         //maxWindSpeed
         HorizontalLayout maxWindSpeed = new HorizontalLayout();
         maxWindSpeed.setSpacing(false);
         maxWindSpeed.getThemeList().add("spacing-s");
+        maxWindSpeed.addClassName("flex");
+        maxWindSpeed.addClassName("text-inline");
 
-        maxWindSpeed.add(new Span("Maximum Wind Speed"), new Span(windSpeed + "km/h"));
+        maxWindSpeed.add(new Span("Max Wind Speed:"), new Span(windSpeed + "km/h"));
 
-        card.addClickListener(event -> this.showHourlyForecasts(date));
+        VerticalLayout verticalLayoutCard = new VerticalLayout();
+        verticalLayoutCard.addClassNames("card", "daily-forcast-item");
+        verticalLayoutCard.setSpacing(false);
+        verticalLayoutCard.getThemeList().add("spacing-s");
 
-        description.add(
+        verticalLayoutCard.addClickListener(event -> this.showHourlyForecasts(date));
+
+        VerticalLayout verticalLayoutDescription = new VerticalLayout();
+        verticalLayoutDescription.addClassName("description");
+        verticalLayoutDescription.setSpacing(false);
+        verticalLayoutDescription.setPadding(false);
+
+        verticalLayoutDescription.add(
                 dateLayout,
                 minTempLayout,
                 maxTempLayout,
                 rainLayout,
                 maxWindSpeed);
-        card.add(description);
-        return card;
+        verticalLayoutCard.add(verticalLayoutDescription);
+
+        return verticalLayoutCard;
     }
 
     private void showHourlyForecasts(String date) {
         List<HourlyForecastDTO> hourlyForecastDTOList = this.weatherForecastService.getHourlyForeCast(this.weatherForecastResponse, date);
 
         divHourlyForecast.removeAll();
+        divHourlyForecast.addClassName("grid");
+        divHourlyForecast.addClassName("fullscreen");
         this.hourlyForecastTitle.setText("Hourly Forecasts of " + date);
 
         for (HourlyForecastDTO hourlyForecastDTO : hourlyForecastDTOList) {
@@ -227,16 +244,8 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         }
     }
 
-    private HorizontalLayout hourlyForecastsCard(String time, Double temp, Double rain, Double windSpeed) {
-        HorizontalLayout card = new HorizontalLayout();
-        card.addClassNames("card", "daily-forcast-item");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
+    private VerticalLayout hourlyForecastsCard(String time, Double temp, Double rain, Double windSpeed) {
 
-        VerticalLayout description = new VerticalLayout();
-        description.addClassName("description");
-        description.setSpacing(false);
-        description.setPadding(false);
 
         //date
         HorizontalLayout dateLayout = new HorizontalLayout();
@@ -266,27 +275,26 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
 
         maxWindSpeed.add(new Span("Wind Speed"), new Span(windSpeed + "km/h"));
 
+        VerticalLayout description = new VerticalLayout();
+        description.addClassName("description");
+        description.setSpacing(false);
+        description.setPadding(false);
         description.add(
                 dateLayout,
                 minTempLayout,
                 rainLayout,
                 maxWindSpeed);
-        card.add(description);
-        return card;
+
+        VerticalLayout verticalLayoutHourlyCard = new VerticalLayout();
+        verticalLayoutHourlyCard.addClassNames("card", "daily-forcast-item");
+        verticalLayoutHourlyCard.setSpacing(false);
+        verticalLayoutHourlyCard.getThemeList().add("spacing-s");
+        verticalLayoutHourlyCard.add(description);
+        return verticalLayoutHourlyCard;
     }
 
 
-    private HorizontalLayout createCard(WeatherForecastResponse weatherForecastResponse) {
-        VerticalLayout verticalLayoutTopLayout = new VerticalLayout();
-        verticalLayoutTopLayout.addClassName("card");
-        verticalLayoutTopLayout.setSpacing(true);
-        verticalLayoutTopLayout.getThemeList().add("spacing");
-
-        HorizontalLayout card = new HorizontalLayout();
-
-        HorizontalLayout horizontalLayoutMainTitle = new HorizontalLayout();
-        horizontalLayoutMainTitle.addClassName("description");
-        horizontalLayoutMainTitle.setSpacing(true);
+    private HorizontalLayout horizontalLayoutCurrentWeather(WeatherForecastResponse weatherForecastResponse) {
 
         HorizontalLayout horizontalLayoutTemperature = new HorizontalLayout();
         horizontalLayoutTemperature.addClassName("header");
@@ -294,30 +302,34 @@ public class WeatherDetail extends VerticalLayout implements BeforeEnterObserver
         horizontalLayoutTemperature.getThemeList().add("spacing");
 
         Span spanTemperature = new Span("Temperature: ");
-//        spanTemperature.addClassName("temperature");
 
         Span spanCurrentTemperature = new Span(weatherForecastResponse.getCurrent_weather().getTemperature() + " °C");
-//        spanCurrentTemperature.addClassName("current-temperature");
 
         horizontalLayoutTemperature.add(spanTemperature, spanCurrentTemperature);
 
         Span spanWindSpeed = new Span("Wind Speed: " + weatherForecastResponse.getCurrent_weather().getWindspeed() + " km/h");
-//        spanWindSpeed.addClassName("current-temperature");
 
         Span spanDayNight = new Span(weatherForecastResponse.getCurrent_weather().getIs_day() == 1 ? "Day" : "Night");
-//        spanDayNight.addClassName("current-temperature");
 
         String windDirection = getWindDirection(weatherForecastResponse.getCurrent_weather().getWinddirection());
 
         Span spanWindDirection = new Span("Wind Direction: " + windDirection);
-//        spanWindDirection.addClassName("current-temperature");
 
-        horizontalLayoutMainTitle.add(spanDayNight,horizontalLayoutTemperature, spanWindSpeed,  spanWindDirection);
+        HorizontalLayout horizontalLayoutMainTitle = new HorizontalLayout();
+        horizontalLayoutMainTitle.addClassName("description");
+        horizontalLayoutMainTitle.setSpacing(true);
+        horizontalLayoutMainTitle.add(spanDayNight, horizontalLayoutTemperature, spanWindSpeed, spanWindDirection);
 
+        VerticalLayout verticalLayoutTopLayout = new VerticalLayout();
+        verticalLayoutTopLayout.addClassName("card");
+        verticalLayoutTopLayout.setSpacing(true);
+        verticalLayoutTopLayout.getThemeList().add("spacing");
         verticalLayoutTopLayout.add(mainTitle, horizontalLayoutMainTitle);
-        card.add(verticalLayoutTopLayout);
 
-        return card;
+        HorizontalLayout horizontalLayoutCurrentWeatherCard = new HorizontalLayout();
+        horizontalLayoutCurrentWeatherCard.add(verticalLayoutTopLayout);
+
+        return horizontalLayoutCurrentWeatherCard;
     }
 
     private String getWindDirection(double angle) {

@@ -13,12 +13,13 @@
     background-color: var(--lumo-contrast-10pct);
 }
 
+
 .card-list-view .card {
     background-color: var(--lumo-base-color);
     border-radius: var(--lumo-border-radius);
     box-shadow: var(--lumo-box-shadow-xs);
     padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
-    margin-bottom: 0.5rem;
+    margin: 0.5rem;
 }
 
 .card-list-view img {
@@ -31,6 +32,24 @@
 
 .card-list-view .header {
     align-items: baseline;
+}
+
+.flex {
+    display: flex;
+}
+.grid{
+    display: grid;
+    justify-content: space-evenly;
+    grid-template-columns: auto auto auto auto auto auto;
+}
+
+.fullscreen {
+    width: 100vw;
+    max-width: 100vw;
+}
+
+.text-inline {
+    white-space: nowrap;
 }
 
 .button-pointer {

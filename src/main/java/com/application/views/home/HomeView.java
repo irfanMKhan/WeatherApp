@@ -151,12 +151,6 @@ public class HomeView extends VerticalLayout implements AfterNavigationObserver 
     /* below method is overridden for AfterNavigationObserver implementation */
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        String searchCity = this.textFieldCityName.getValue();
-        if (searchCity.equals("")) {
-            searchCity = (String) VaadinSession.getCurrent().getAttribute("searched_city");
-        }
-        if (searchCity != null) this.textFieldCityName.setValue(searchCity);
-
         this.getCityList();
     }
 

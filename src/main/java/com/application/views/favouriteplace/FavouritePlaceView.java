@@ -43,11 +43,6 @@ public class FavouritePlaceView extends VerticalLayout implements AfterNavigatio
         add(cityListDiv);
     }
 
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        this.getCityList();
-    }
-
     private void getCityList() {
         List<CityGeoCodingDTO> cityGeoCodingDTOList = this.userFavouritePlaceService.getCurrentUserFavouriteCityGeoCoding();
         if (cityGeoCodingDTOList == null) cityGeoCodingDTOList = new ArrayList<>();
@@ -63,5 +58,11 @@ public class FavouritePlaceView extends VerticalLayout implements AfterNavigatio
         if (cityGeoCodingDTOList.size() < 1) {
             add(notFoundFavouriteH2);
         }
+    }
+
+    /* below method is overridden for AfterNavigationObserver implementation */
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        this.getCityList();
     }
 }
